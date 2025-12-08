@@ -1,0 +1,107 @@
+-- 1. डेटाबेस बनाना
+CREATE DATABASE taj_hotel;
+
+-- 2. इस डेटाबेस का उपयोग करना
+USE taj_hotel;
+CREATE TABLE users (
+    UserID INT PRIMARY KEY,
+    UserName VARCHAR(50) NOT NULL,
+    Password VARCHAR(50) NOT NULL,
+    UserType VARCHAR(10) CHECK (UserType IN ('guest', 'staff'))
+);
+CREATE TABLE guests (
+    UserID INT PRIMARY KEY,
+    UserName VARCHAR(50),
+    PhoneNum VARCHAR(15),
+    Address VARCHAR(255),
+    Gender VARCHAR(10),
+    User_Type VARCHAR(10),
+    FOREIGN KEY (UserID) REFERENCES users(UserID)
+);
+CREATE TABLE staff (
+    UserID INT PRIMARY KEY,
+    UserName VARCHAR(50),
+    Dept VARCHAR(50),
+    PhoneNum VARCHAR(15),
+    DateOfJoining DATE,
+    Address VARCHAR(255),
+    Gender VARCHAR(10),
+    User_type VARCHAR(10),
+    FOREIGN KEY (UserID) REFERENCES users(UserID)
+);
+CREATE TABLE rooms (
+    RoomNum INT PRIMARY KEY,
+    Status VARCHAR(10) CHECK (Status IN ('Vacant', 'Occupied'))
+);
+CREATE TABLE roombooking (
+    RoomNum INT,
+    BookingID INT PRIMARY KEY,
+    User_ID INT,
+    User_Name VARCHAR(50),
+    Address VARCHAR(255),
+    Phone_Num VARCHAR(15),
+    CheckIn DATE,
+    CheakOut DATE,
+    Gender VARCHAR(10),
+    FOREIGN KEY (User_ID) REFERENCES users(UserID)
+);
+CREATE TABLE menu (
+    ItemNum INT PRIMARY KEY,
+    ItemName VARCHAR(100),
+    Price DECIMAL(10, 2),
+    Category VARCHAR(50),
+    Availability VARCHAR(10) -- veg or non-veg, as per add_dish function
+);
+CREATE TABLE table_booking (
+    TableNum INT,
+    UserID INT,
+    Date DATE,
+    Time TIME,
+    PRIMARY KEY (TableNum, Date, Time), -- Combined key for unique booking
+    FOREIGN KEY (UserID) REFERENCES users(UserID)
+);
+CREATE TABLE order_info (
+    OrderNum INT PRIMARY KEY,
+    User_ID INT,
+    Table_Num INT,
+    Total_Amount DECIMAL(10, 2),
+    FOREIGN KEY (User_ID) REFERENCES users(UserID)
+    -- Table_Num foreign key relation is complex without a dedicated tables table.
+);
+CREATE TABLE order_info (
+    OrderNum INT PRIMARY KEY,
+    User_ID INT,
+    Table_Num INT,
+    Total_Amount DECIMAL(10, 2),
+    FOREIGN KEY (User_ID) REFERENCES users(UserID)
+    -- Table_Num foreign key relation is complex without a dedicated tables table.
+);
+CREATE TABLE order_details (
+    OrderNum INT,
+    ItemNum INT,
+    Quantity INT,
+    Subtotal DECIMAL(10, 2),
+    PRIMARY KEY (OrderNum, ItemNum),
+    FOREIGN KEY (OrderNum) REFERENCES order_info(OrderNum),
+    FOREIGN KEY (ItemNum) REFERENCES menu(ItemNum)
+);
+INSERT INTO rooms (RoomNum, Status) VALUES
+(101, 'Vacant'),
+(102, 'Occupied'),
+(103, 'Vacant'),
+(201, 'Vacant');
+
+INSERT INTO users (UserID, UserName, Password, UserType) VALUES
+(1, 'Gourab', '123456', 'guest'),
+(2, 'AdminStaff', 'staffpwd', 'staff');
+
+INSERT INTO guests (UserID, UserName, PhoneNum, Address, Gender, User_Type) VALUES
+(1, 'Gourab', '9876543210', 'Patna, India', 'Male', 'Guest');
+
+INSERT INTO staff (UserID, UserName, Dept, PhoneNum, DateOfJoining, Address, Gender, User_type) VALUES
+(2, 'AdminStaff', 'Management', '9988776655', '2023-01-15', 'Hotel Office', 'Male', 'Staff');
+
+INSERT INTO menu (ItemNum, ItemName, Price, Category, Availability) VALUES
+(10, 'Chicken Curry', 450.00, 'Main Course', 'non-veg'),
+(20, 'Paneer Tikka', 300.00, 'Starter', 'veg'),
+(30, 'Cold Drink', 50.00, 'Beverage', 'veg');
