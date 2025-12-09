@@ -18,6 +18,7 @@ CREATE TABLE guests (
     User_Type VARCHAR(10),
     FOREIGN KEY (UserID) REFERENCES users(UserID)
 );
+
 CREATE TABLE staff (
     UserID INT PRIMARY KEY,
     UserName VARCHAR(50),
