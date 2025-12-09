@@ -13,7 +13,7 @@ def login():
         y = int(input("Enter your password:"))
         
         # Connect to the database (hardcoded credentials as per the project)
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         
         # Check credentials
@@ -49,7 +49,7 @@ def room_booking(s):
     """Handles room booking process."""
     try:
         print('-------------------------------------------------')
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         co.execute('select * from roombooking ')
         g = co.fetchall()
@@ -109,7 +109,7 @@ def room_details():
     """Displays all room details from the 'rooms' table."""
     print('-------------------------------------------------')
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         co.execute('select * from rooms')
         q = co.fetchall()
@@ -124,7 +124,7 @@ def menu():
     """Displays the restaurant menu."""
     print('-------------------------------------------------')
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         print("*****MENU*****")
         print('item_number, item_name, price, category, availability')
@@ -146,7 +146,7 @@ def order():
 
     print('-------------------------------------------------')
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         r = s[0][0] # user id
         
@@ -213,7 +213,7 @@ def table_booking():
 
     print('-------------------------------------------------')
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         
         tn = int(input('Enter Table number:'))
@@ -232,7 +232,50 @@ def table_booking():
         print(f"An error occurred during table booking: {e}")
         
     print('-------------------------------------------------')
-    
+def feedback():
+    """Handles the user feedback submission."""
+    global s
+    if not s:
+        print("Please log in or sign up first.")
+        return
+
+    print('-------------------------------------------------')
+    try:
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
+        co = mydb.cursor()
+        
+        user_id = s[0][0] 
+        user_name = s[0][1]
+        
+        # Get next Feedback ID
+        co.execute('SELECT FeedbackID FROM feedback ORDER BY FeedbackID DESC LIMIT 1')
+        last_id = co.fetchone()
+        feedback_id = last_id[0] + 1 if last_id else 1 
+        
+        print("Your Feedback ID is", feedback_id)
+        
+        comment = input("Enter your feedback/comment: ")
+        rating = int(input("Enter a rating (1-5, 5 being best): "))
+        
+        if not 1 <= rating <= 5:
+            print("Rating must be between 1 and 5. Please try again.")
+            return
+
+        # Insert into feedback (FeedbackID, UserID, UserName, Comment, Rating)
+        # Note: You need a 'feedback' table in your database for this to work.
+        co.execute("insert into feedback values({},{},'{}','{}',{})".format(feedback_id, user_id, user_name, comment, rating))
+        
+        mydb.commit()
+        print('Thank you! Your feedback has been recorded.')
+        
+    except ValueError:
+        print('Invalid input given (expected a number for rating).')
+    except m.Error as err:
+        print(f"Database error: {err}. Ensure the 'feedback' table exists.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+    print('-------------------------------------------------')    
 # --- Staff Management Functions ---
 
 def insert_sdetails():
@@ -244,7 +287,7 @@ def insert_sdetails():
 
     print("--------------------------------------------------")
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         
         p = s[0][0] # user id (from current session)
@@ -272,7 +315,7 @@ def remove_sdetails():
     """Removes a staff member's details by UserID."""
     print("_______________________________________")
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         c = int(input("Enter UserID of the staff member to remove: ")) 
         co.execute("delete from staff where UserID ={}".format(c))
@@ -289,7 +332,7 @@ def staff_name_change():
     global s
     if not s: return
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user id
         x = input('Enter the new name:')
@@ -307,7 +350,7 @@ def staff_department_change():
     global s
     if not s: return
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user id
         x = input('Enter the department name:')
@@ -323,7 +366,7 @@ def staff_phoneNum_change():
     global s
     if not s: return
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user id
         x = input('Enter the new phone number:')
@@ -339,7 +382,7 @@ def staff_address_change():
     global s
     if not s: return
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user id
         x = input('Enter the new address:')
@@ -353,7 +396,7 @@ def staff_address_change():
 def search_sname():
     """Searches staff by name."""
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         x = input('Enter the staff member name you want to search about:')
         co.execute('select * from staff where UserName like "%{}%"'.format(x))
@@ -368,7 +411,7 @@ def search_sname():
 def search_staff():
     """Searches staff by UserID, Department, Phone No., or Date of Joining."""
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         print('Press 1- search through UserId')
         print('Press 2- search through department')
@@ -403,7 +446,7 @@ def search_staff():
 def roombooking_remove():
     """Removes a room booking record by Booking ID."""
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         print('To remove a record from room booking details')
         ckl = int(input("Enter the booking ID to be removed:"))
@@ -418,7 +461,7 @@ def room_booking_details():
     """Shows room booking details for a given UserID."""
     print('-------------------------------------------------')
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         v = input("enter userid to view booking details:")
         co.execute("select * from roombooking where UserID={} ".format(v))
@@ -434,7 +477,7 @@ def add_dish():
     """Adds a new dish to the menu."""
     print("__________________________________________")
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         p = int(input("enter item number:"))
         k = input("enter item Name:")
@@ -453,7 +496,7 @@ def add_dish():
 def remove_dish():
     """Removes a dish from the menu by Item Number."""
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         o = int(input("Enter item number:"))
         co.execute("delete from menu where ItemNum ={}".format(o))
@@ -469,7 +512,7 @@ def change_price_dish():
     """Updates the price of a dish."""
     try:
         print("--------------------------------------------------")
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         h = int(input("Enter item number to be updated:"))
         sh = int(input("Enter new price of the dish:"))
@@ -485,7 +528,7 @@ def change_name_dish():
     """Updates the name of a dish."""
     try:
         print("--------------------------------------------------")
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         h = int(input("Enter item number to be updated:"))
         sh = input("Enter new name of the dish:")
@@ -500,7 +543,7 @@ def change_name_dish():
 def order_details():
     """Displays all order information."""
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         co.execute("select * from order_info ")
         a = co.fetchall()
@@ -517,7 +560,7 @@ def cancel_booking():
     if not s: return
     try:
         print("--------------------------------------------------")
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user's id
         co.execute("delete from table_booking where UserID ={}".format(pu))
@@ -533,7 +576,7 @@ def book_table():
     if not s: return
     try:
         print("--------------------------------------------------")
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user's id
         o = int(input("Enter table number to be booked:"))
@@ -553,7 +596,7 @@ def guest_details():
     """Displays all guest details."""
     print('-------------------------------------------------')
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         co.execute("select * from guests")
         a = co.fetchall()
@@ -570,7 +613,7 @@ def insert_gdetails():
     if not s: return
     try:
         print("--------------------------------------------------")
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         p = s[0][0] # user id
         k = s[0][1] # user name
@@ -591,7 +634,7 @@ def remove_gdetails():
     """Removes a guest member's details by UserID."""
     try:
         print("--------------------------------------------")
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         c = int(input("Enter UserID of the guest to remove: "))
         co.execute("delete from guests where UserID ={}".format(c))
@@ -606,7 +649,7 @@ def guest_name_change():
     global s
     if not s: return
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user id
         x = input('Enter the new name:')
@@ -624,7 +667,7 @@ def guest_phoneNum_change():
     global s
     if not s: return
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user id
         x = input('Enter the new phone number:')
@@ -640,7 +683,7 @@ def guest_address_change():
     global s
     if not s: return
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         pu = s[0][0] # user id
         x = input('Enter the new address:')
@@ -654,7 +697,7 @@ def guest_address_change():
 def search_gname():
     """Searches guests by name."""
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         x = input('Enter the guest name you want to search about:')
         co.execute('select * from guests where UserName like "%{}%"'.format(x))
@@ -666,7 +709,7 @@ def search_gname():
 def search_guest():
     """Searches guests by UserID, Address, Phone No., or Gender."""
     try:
-        mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+        mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
         co = mydb.cursor()
         print('Press 1- search through UserId')
         print('Press 2- search through Address')
@@ -745,7 +788,7 @@ if __name__ == "__main__":
             elif choose == 2: # sign in
                 print("--------------------------------------------------")
                 try:
-                    mydb = m.connect(host="localhost", user="root", password="admin", database="taj_hotel")
+                    mydb = m.connect(host="localhost", user="root", password="gouravbhai@12", database="taj_hotel")
                     co = mydb.cursor()
                 except m.Error as err:
                     print(f"Database connection error: {err}")
