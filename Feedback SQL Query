@@ -1,0 +1,8 @@
+CREATE TABLE feedback (
+    FeedbackID INT PRIMARY KEY,
+    UserID INT,
+    UserName VARCHAR(100),
+    Comment TEXT,
+    Rating INT,
+    FOREIGN KEY (UserID) REFERENCES users(UserID) -- Assuming 'users' table exists and UserID is the primary key there
+);
