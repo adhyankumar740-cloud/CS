@@ -1,8 +1,8 @@
--- 1. डेटाबेस बनाना
+
 CREATE DATABASE taj_hotel;
 
--- 2. इस डेटाबेस का उपयोग करना
 USE taj_hotel;
+
 CREATE TABLE users (
     UserID INT PRIMARY KEY,
     UserName VARCHAR(50) NOT NULL,
